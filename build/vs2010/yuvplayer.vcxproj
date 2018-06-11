@@ -1,0 +1,124 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{05EE014C-8D8B-4A39-9B39-8A99B9469897}</ProjectGuid>
+    <RootNamespace>yuvplayer</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <UseOfMfc>Static</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+    <UseOfMfc>Static</UseOfMfc>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\YUVPlayer\CFile64.cpp" />
+    <ClCompile Include="..\..\YUVPlayer\ChildDlg.cpp" />
+    <ClCompile Include="..\..\YUVPlayer\colorconvert.cpp" />
+    <ClCompile Include="..\..\YUVPlayer\configure.cpp" />
+    <ClCompile Include="..\..\YUVPlayer\CustomSizeDlg.cpp" />
+    <ClCompile Include="..\..\YUVPlayer\DiffPicDlg.cpp" />
+    <ClCompile Include="..\..\YUVPlayer\ImageDlg.cpp" />
+    <ClCompile Include="..\..\YUVPlayer\JumpFrameDlg.cpp" />
+    <ClCompile Include="..\..\YUVPlayer\MBInfoDlg.cpp" />
+    <ClCompile Include="..\..\YUVPlayer\multithread.cpp" />
+    <ClCompile Include="..\..\YUVPlayer\scale.cpp" />
+    <ClCompile Include="..\..\YUVPlayer\StdAfx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\YUVPlayer\YUVPlayer.cpp" />
+    <ClCompile Include="..\..\YUVPlayer\YUVPlayerDlg.cpp" />
+    <ClCompile Include="..\..\YUVPlayer\yuvrgb24.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\YUVPlayer\CFile64.h" />
+    <ClInclude Include="..\..\YUVPlayer\ChildDlg.h" />
+    <ClInclude Include="..\..\YUVPlayer\colorconvert.h" />
+    <ClInclude Include="..\..\YUVPlayer\configure.h" />
+    <ClInclude Include="..\..\YUVPlayer\CustomSizeDlg.h" />
+    <ClInclude Include="..\..\YUVPlayer\define.h" />
+    <ClInclude Include="..\..\YUVPlayer\DiffPicDlg.h" />
+    <ClInclude Include="..\..\YUVPlayer\ImageDlg.h" />
+    <ClInclude Include="..\..\YUVPlayer\JumpFrameDlg.h" />
+    <ClInclude Include="..\..\YUVPlayer\log.h" />
+    <ClInclude Include="..\..\YUVPlayer\MBInfoDlg.h" />
+    <ClInclude Include="..\..\YUVPlayer\multithread.h" />
+    <ClInclude Include="..\..\YUVPlayer\Resource.h" />
+    <ClInclude Include="..\..\YUVPlayer\scale.h" />
+    <ClInclude Include="..\..\YUVPlayer\StdAfx.h" />
+    <ClInclude Include="..\..\YUVPlayer\YUVPlayer.h" />
+    <ClInclude Include="..\..\YUVPlayer\YUVPlayerDlg.h" />
+    <ClInclude Include="..\..\YUVPlayer\yuvrgb24.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\YUVPlayer\res\BOY.bmp" />
+    <None Include="..\..\YUVPlayer\res\BOY.ico" />
+    <None Include="..\..\YUVPlayer\res\YUVPlayer.bmp" />
+    <None Include="..\..\YUVPlayer\res\YUVPlayer.ico" />
+    <None Include="..\..\YUVPlayer\res\YUVPlayer.rc2" />
+    <None Include="..\..\YUVPlayer\YUVPlayer.aps" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\..\YUVPlayer\YUVPlayer.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
