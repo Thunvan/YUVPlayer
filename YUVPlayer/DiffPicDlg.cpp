@@ -320,6 +320,51 @@ void CDiffPicDlg::get_one_frame(uint8 u8ImageMode)
 		
 		break;
 
+
+    case YUV420LE10:
+    case YUV420BE10:    
+        u32Offset	 = 0;
+        for (j = 0; j < (s32Height); j++)
+        {
+            for (i = 0; i< (s32Width); i ++)
+            {
+                int32	s32Diff	 = pYUV2[1][u32Offset] - pYUV1[1][u32Offset];
+
+                pOrigYUV[1][u32Offset]	 = u8DiffMode ? ABS(s32Diff) : BIN(s32Diff);
+                bSameFlag	&= (!s32Diff);
+                u32Offset ++;
+            }
+        }
+
+        u32Offset	 = 0;
+        for (j = 0; j < (s32Height); j++)
+        {
+            for (i = 0; i< (s32Width); i ++)
+            {
+                int32	s32Diff	 = pYUV2[2][u32Offset] - pYUV1[2][u32Offset];
+
+                pOrigYUV[2][u32Offset]	 = u8DiffMode ? ABS(s32Diff) : BIN(s32Diff);
+                bSameFlag	&= (!s32Diff);
+                u32Offset ++;
+            }
+        }
+    
+        u32Offset	 = 0;
+        for (j = 0; j < (s32Height>>1); j++)
+        {
+            for (i = 0; i< (s32Width>>1); i ++)
+            {
+                int32	s32Diff	 = pYUV2[0][u32Offset] - pYUV1[0][u32Offset];
+
+                pOrigYUV[0][u32Offset]	 = u8DiffMode ? ABS(s32Diff) : BIN(s32Diff);
+                bSameFlag	&= (!s32Diff);
+                u32Offset ++;
+            }
+        }
+
+        break;
+
+
 	default:
 		break;
 	}

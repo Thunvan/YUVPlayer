@@ -512,7 +512,7 @@ int32 CYUVPlayerDlg::creat_image_window(CString CurrFilePath)
 	pNewImg->s32ZoomWidth		= s32ZoomWidth;
 	pNewImg->s32ZoomHeight		= s32ZoomHeight;
 	pNewImg->pCriticalSection	= &(m_CriticalSection);
-	pNewImg->u32LumaPicSize		= s32Width * s32Height;
+	//pNewImg->u32LumaPicSize		= s32Width * s32Height;
 	pNewImg->s32MBXNum			= (s32Width + 15) >> 4;
 	pNewImg->s32MBYNum			= (s32Height + 15) >> 4;
 
@@ -627,6 +627,14 @@ int32 CYUVPlayerDlg::get_sample_ratio()
 	case 1:
 		u8SampleFormat   = YUV420;
 		break;
+
+    case 2:
+        u8SampleFormat   = YUV420LE10;
+        break;
+
+    case 3:
+        u8SampleFormat   = YUV420BE10;
+        break;
 
 	default:
 		AfxMessageBox("采样格式无效！", MB_ICONERROR);

@@ -63,6 +63,9 @@ typedef		unsigned __int64	uint64;
 #define		YUV422				2
 #define		YUV444				3
 
+#define		YUV420LE10		    4
+#define		YUV420BE10			5
+
 //======= ²¥·Å×´Ì¬ =======
 #define		STOP_STATUS			0
 #define		PAUSE_STATUS		1

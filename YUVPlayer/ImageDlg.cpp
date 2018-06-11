@@ -112,6 +112,7 @@ int32 CImageDlg::initial()
     switch (u8SampleFormat)
     {
     case YUV400:
+        u32LumaPicSize   = s32Width * s32Height;
         u32ChroPicSize	 = (s32Width >> 1) * (s32Height >> 1);  //++ 按 4:2:0 计算色度空间
         u32FrameSize	 = u32LumaPicSize;
         s32FrameNum		 = pFile->GetLength() / u32FrameSize;
@@ -119,10 +120,20 @@ int32 CImageDlg::initial()
         break;
         
     case YUV420:
+        u32LumaPicSize   = s32Width * s32Height;
         u32ChroPicSize	 = (s32Width >> 1) * (s32Height >> 1);
         u32FrameSize	 = u32LumaPicSize + (u32ChroPicSize << 1);
         s32FrameNum		 = pFile->GetLength() / u32FrameSize;
         
+        break;
+
+    case YUV420LE10:
+    case YUV420BE10:
+        u32LumaPicSize   = s32Width * s32Height * 2;
+        u32ChroPicSize	 = (s32Width >> 1) * (s32Height >> 1) * 2;
+        u32FrameSize	 = u32LumaPicSize + (u32ChroPicSize << 1);
+        s32FrameNum		 = pFile->GetLength() / u32FrameSize;
+
         break;
         
     default:
@@ -264,6 +275,45 @@ void CImageDlg::rotate_image(LPBYTE pSrcY, LPBYTE pSrcU, LPBYTE pSrcV)
 			}
 			
 			break;
+
+        case YUV420LE10:
+        case YUV420BE10:
+        
+            pu8SrcU	= pSrcU + (s32SrcWidth);
+            pu8SrcV	= pSrcV + (s32SrcWidth);
+            for (j = 0; j < (s32SrcHeight); j ++)
+            {
+                pu8DstU	= pRotaYUV[1] + u32ChroPicSize - j;
+                pu8DstV	= pRotaYUV[2] + u32ChroPicSize - j;
+                for (i = 0; i < (s32SrcWidth); i ++)
+                {
+                    pu8DstU[0]	 = pu8SrcU[-i];
+                    pu8DstV[0]	 = pu8SrcV[-i];
+                    pu8DstU	-= (s32SrcHeight);
+                    pu8DstV	-= (s32SrcHeight);
+                }
+
+                pu8SrcU	+= (s32SrcWidth);
+                pu8SrcV	+= (s32SrcWidth);
+            }
+        
+            pu8SrcY	= pSrcY + s32SrcWidth*2 - 1;		
+            for (j = 0; j < s32SrcHeight*2; j ++)
+            {
+                pu8DstY	= pRotaYUV[0] + u32LumaPicSize - j - 1;
+
+                for (i = 0; i < s32SrcWidth*2; i ++)
+                {
+                    pu8DstY[0]	 = pu8SrcY[-i];
+                    pu8DstY		-= s32SrcHeight*2;
+                }
+
+                pu8SrcY	+= s32SrcWidth*2;		
+            }
+
+            break;
+
+
 		default:
 			break;
 		}
@@ -504,6 +554,8 @@ int32 CImageDlg::read_one_frame(uint8 u8ImageMode)
 		break;
 		
 	case YUV420:
+    case YUV420LE10:
+    case YUV420BE10:
 		if (u32LumaPicSize != pFile->Read(pReadYUV[0], u32LumaPicSize))
 		{
 			return EOF_YUVPlayer;

@@ -171,6 +171,13 @@ void CChildDlg::color_space_convert(uint8 u8ImageMode)
 
         break;
 
+    case YUV420LE10:
+    case YUV420BE10:
+        s32ChroWidth    = (s32Width >> 1)*2;
+        s32ChroHeigth   = (s32Height >> 1)*2;
+
+        break;
+
     default:
 
         break;
@@ -217,6 +224,7 @@ void CChildDlg::color_space_convert(uint8 u8ImageMode)
     }
 }
 
+#define clip(var) ((var>=255)?255:(var<=0)?0:var)
 void CChildDlg::YV12_to_RGB24(uint8* pu8Y, uint8* pu8U, uint8* pu8V)
 {
 	int32	x;
@@ -229,46 +237,105 @@ void CChildDlg::YV12_to_RGB24(uint8* pu8Y, uint8* pu8U, uint8* pu8V)
     CYUVPlayerDlg	*pMainDlg	 = (CYUVPlayerDlg *)this->pMainDlg;
 
 
-	k	= s32Height * s32RGBBuffStride;
+    switch (u8SampleFormat)
+    {
+    
+    case YUV420LE10:
+    case YUV420BE10:
+        {
+            unsigned char* line = pRGBBuff;
+            unsigned char* cur;
+            int c, d, e;
+            int i,j;
+            uint8* y = pu8Y;
+            uint8* u = pu8U; 
+            uint8* v = pu8V;
+            
+            line = line + (s32Height - 1) * s32RGBBuffStride;
+            for( j = 0 ; j < s32Height ; j++ ){
+                cur = line;
+                for( i = 0 ; i < s32Width ; i++ ){
+
+                    if (u8SampleFormat == YUV420BE10)
+                    {
+                        c = (y[j*s32Width*2 +  i*2] << 8) | y[j*s32Width*2 +  i*2 + 1];
+                        d = (u[(j>>1)*s32Width+(i>>1<<1)  ] << 8) | u[(j>>1)*s32Width+(i>>1<<1)+1];
+                        e = (v[(j>>1)*s32Width+(i>>1<<1)  ] << 8) | v[(j>>1)*s32Width+(i>>1<<1)+1];
+                    }
+                    else
+                    {
+                        c = (y[j*s32Width*2 +  i*2 + 1] << 8)  | y[j*s32Width*2 +  i*2];
+                        d = (u[(j>>1)*s32Width+(i>>1<<1)+1] << 8)  | u[(j>>1)*s32Width+(i>>1<<1)  ];
+                        e = (v[(j>>1)*s32Width+(i>>1<<1)+1] << 8)  | v[(j>>1)*s32Width+(i>>1<<1)  ];
+                    }
+
+                    c = c - (16<<2);
+                    d = d - (128<<2);
+                    e = e - (128<<2);
+
+#if 0
+
+
+#else
+                    (*cur) = clip(( 298 * c + 516 * d           + (128<<2)) >> 10);cur++;
+                    (*cur) = clip(( 298 * c - 100 * d - 208 * e + (128<<2)) >> 10);cur++;                    
+                    (*cur) = clip(( 298 * c           + 409 * e + (128<<2)) >> 10);cur++;
+#endif
+
+                }
+                line -= s32RGBBuffStride;
+            }
+        }
+        
+        break;
+    
+    default:
+
+	    k	= s32Height * s32RGBBuffStride;
 	
-	for(y = 0; y < s32Height; y ++)
-	{
-		k	-= s32RGBBuffStride;
+	    for(y = 0; y < s32Height; y ++)
+	    {
+		    k	-= s32RGBBuffStride;
 
-		for(x = 0; x < s32Width; x ++)
-		{
-			int32	i;
-			int32	j;
+		    for(x = 0; x < s32Width; x ++)
+		    {
+			    int32	i;
+			    int32	j;
 
-			i	= m + x;
-			j	= n + (x >> 1);
-			rgb[2]	= int32(1.164383 * (pu8Y[i] - 16) + 1.596027 * (pu8V[j] - 128)); // r
-			rgb[1]	= int32(1.164383 * (pu8Y[i] - 16) - 0.812968 * (pu8V[j] - 128) - 0.391762 * (pu8U[j] - 128)); // g
-			rgb[0]	= int32(1.164383 * (pu8Y[i] - 16) + 2.017232 * (pu8U[j] - 128)); // b			
-// 			rgb[2]	= int32(1.164 * (pu8Y[i] - 16) + 1.793 * (pu8V[j] - 128)); // r
-// 			rgb[1]	= int32(1.164 * (pu8Y[i] - 16) - 0.534 * (pu8V[j] - 128) - 0.213 * (pu8U[j] - 128)); // g
-// 			rgb[0]	= int32(1.164 * (pu8Y[i] - 16) + 2.115 * (pu8U[j] - 128)); // b			
+			    i	= m + x;
+			    j	= n + (x >> 1);
+			    rgb[2]	= int32(1.164383 * (pu8Y[i] - 16) + 1.596027 * (pu8V[j] - 128)); // r
+			    rgb[1]	= int32(1.164383 * (pu8Y[i] - 16) - 0.812968 * (pu8V[j] - 128) - 0.391762 * (pu8U[j] - 128)); // g
+			    rgb[0]	= int32(1.164383 * (pu8Y[i] - 16) + 2.017232 * (pu8U[j] - 128)); // b			
+    // 			rgb[2]	= int32(1.164 * (pu8Y[i] - 16) + 1.793 * (pu8V[j] - 128)); // r
+    // 			rgb[1]	= int32(1.164 * (pu8Y[i] - 16) - 0.534 * (pu8V[j] - 128) - 0.213 * (pu8U[j] - 128)); // g
+    // 			rgb[0]	= int32(1.164 * (pu8Y[i] - 16) + 2.115 * (pu8U[j] - 128)); // b			
 
-			i	= k + x * 3;
-			for(j = 0; j < 3; j ++)
-			{
-				if((rgb[j] >= 0) && (rgb[j] <= 255))
-				{
-					pRGBBuff[i + j]		= rgb[j];
-				}
-				else
-				{
-					pRGBBuff[i + j]		= (rgb[j] < 0) ? 0 : 255;
-				}
-			}
-		}
+			    i	= k + x * 3;
+			    for(j = 0; j < 3; j ++)
+			    {
+				    if((rgb[j] >= 0) && (rgb[j] <= 255))
+				    {
+					    pRGBBuff[i + j]		= rgb[j];
+				    }
+				    else
+				    {
+					    pRGBBuff[i + j]		= (rgb[j] < 0) ? 0 : 255;
+				    }
+			    }
+		    }
 		
-		m	+= s32Width;
-		if(y % 2)
-		{
-			n	+= (s32Width >> 1);
-		}
-	}
+		    m	+= s32Width;
+		    if(y % 2)
+		    {
+			    n	+= (s32Width >> 1);
+		    }
+	    }
+
+    break;
+
+    }
+
 }
 
 void CChildDlg::YUY2_to_RGB24(uint8 *pu8RGBData, uint8 *pu8YUVData)
@@ -618,7 +685,7 @@ void CChildDlg::get_pixel_value()
     int32	s32ChroWidth	 = s32Width >> 1;
     uint8	*pLuma		 = pOrigYUV[0] + (s32ViewMBy * s32LumaWidth + s32ViewMBx);
     uint8	*pCb		 = pOrigYUV[1] + ((s32ViewMBy * s32ChroWidth + s32ViewMBx) >> 1);
-    uint8	*pCr		 = pOrigYUV[2] + ((s32ViewMBy * s32ChroWidth + s32ViewMBx) >> 1);
+    uint8	*pCr		 = pOrigYUV[2] + ((s32ViewMBy * s32ChroWidth + s32ViewMBx) >> 1);    
     
     
     //++ 启用临界区保护
@@ -651,6 +718,64 @@ void CChildDlg::get_pixel_value()
             MBInfoDlg.pixelValue[j][i]	 = pCr[(j - 18) * s32ChroWidth + (i - 9)];
         }
     }
+
+
+    if(u8SampleFormat == YUV420BE10 || u8SampleFormat == YUV420LE10)
+    {
+
+        int32	s32LumaWidth	 = s32Width*2;
+        int32	s32ChroWidth	 = s32Width;
+        uint8	*pLuma		 = pOrigYUV[0] + (s32ViewMBy * s32LumaWidth + s32ViewMBx  * 2);
+        uint8	*pCb		 = pOrigYUV[1] + ((s32ViewMBy * s32ChroWidth + s32ViewMBx * 2) >> 1);
+        uint8	*pCr		 = pOrigYUV[2] + ((s32ViewMBy * s32ChroWidth + s32ViewMBx * 2) >> 1);  
+
+        if (u8SampleFormat == YUV420BE10)
+        {
+            for (j = 1; j < 1 + u8LumaPointNumY; j ++)
+            {
+                for (i = 1; i < 1 + u8LumaPointNumX; i ++)
+                {
+                    MBInfoDlg.pixelValue[j][i]	 = (pLuma[(j - 1)*s32Width*2 +  (i - 1)*2] << 8) | pLuma[(j - 1)*s32Width*2 +  (i - 1)*2 + 1];
+                }
+            }
+            for (j = 18; j < 18 + u8ChroPointNumY; j ++)
+            {
+                for (i = 1; i < 1 + u8ChroPointNumX; i ++)
+                {
+                    MBInfoDlg.pixelValue[j][i]	 =  (pCb[((j - 18)>>1)*s32Width+((i - 1)>>1<<1)  ] << 8) | pCb[((j - 18)>>1)*s32Width+((i - 1)>>1<<1)+1];           
+                }
+
+                for (i = 9; i < 9 + u8ChroPointNumX; i ++)
+                {
+                    MBInfoDlg.pixelValue[j][i]	 =  (pCr[((j - 18)>>1)*s32Width+((i - 9)>>1<<1)  ] << 8) | pCr[((j - 18)>>1)*s32Width+((i - 9)>>1<<1)+1];
+                }
+            }
+        }
+        else
+        {
+            for (j = 1; j < 1 + u8LumaPointNumY; j ++)
+            {
+                for (i = 1; i < 1 + u8LumaPointNumX; i ++)
+                {
+                    MBInfoDlg.pixelValue[j][i]	 =  (pLuma[(j - 1)*s32Width*2 +  (i - 1)*2 + 1] << 8)  | pLuma[(j - 1)*s32Width*2 +  (i - 1)*2];
+                }
+            }
+            for (j = 18; j < 18 + u8ChroPointNumY; j ++)
+            {
+                for (i = 1; i < 1 + u8ChroPointNumX; i ++)
+                {
+                    MBInfoDlg.pixelValue[j][i]	 =  (pCb[((j - 18)>>1)*s32Width+((i - 1)>>1<<1)+1] << 8)  | pCb[((j - 18)>>1)*s32Width+((i - 1)>>1<<1)  ];           
+                }
+
+                for (i = 9; i < 9 + u8ChroPointNumX; i ++)
+                {
+                    MBInfoDlg.pixelValue[j][i]	 =  (pCr[((j - 18)>>1)*s32Width+((i - 9)>>1<<1)+1] << 8)  | pCr[((j - 18)>>1)*s32Width+((i - 9)>>1<<1)  ];
+                }
+            }
+        }
+
+    }
+
 }
 
 void CChildDlg::draw_dash_frame(CRect &cRect)
